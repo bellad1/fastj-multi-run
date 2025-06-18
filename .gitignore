@@ -1,0 +1,55 @@
+# Compiled binaries
+fastJX
+*.exe
+*.out
+
+# Fast-J input/output files
+CTM_GrdCld.dat
+FJX_scat-rsp.dat
+jVals.dat
+meanIntensity.dat
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+
+# Virtual environments
+venv/
+env/
+.env
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Data files (large)
+*.h5
+*.hdf5
+*.zarr/
+*.npz
+
+# Checkpoint and cache files
+fastj_checkpoint.json
+run_conditions.json
+
+# Output directories
+fastj_results/
+aerosol_fastJcsvFiles/
+aerosol_heights/
+
+# Log files
+*.log
+
+# Jupyter notebooks checkpoints
+.ipynb_checkpoints/
