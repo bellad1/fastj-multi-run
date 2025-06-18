@@ -45,18 +45,18 @@ aerosol_heights/
 2. Basic Usage
 pythonfrom multiRunFastJ import main
 
-# Run with default configuration
+### Run with default configuration
 results_array, metadata = main()
 3. Custom Configuration
 Edit the configuration section in multiRunFastJ.py:
 python# Number of runs (None = all available)
 max_runs = 100
 
-# Output processing
+### Output processing
 store_mean_intensity = False
 output_method = 'surface_only'  # or 'full_2d', 'altitude_integrated'
 
-# File management
+### File management
 append_to_existing = True
 save_format = 'zarr'  # or 'numpy', 'hdf5'
 File Structure
@@ -69,19 +69,19 @@ File Structure
 ├── README.md                  # This file
 └── requirements.txt           # Python dependencies
 
-# Data Input Format
-# Aerosol Properties
+## Data Input Format
+### Aerosol Properties
 CSV files with wavelengths in header row and measurements in subsequent rows:
 csv187.0,191.0,193.0,196.0,...
 0.123,0.145,0.156,0.167,...
 0.098,0.112,0.125,0.134,...
-# Height Data
+### Height Data
 Single column CSV with header:
 csvHSRL Aerosol Heights for Urban/Pollution
 2450.0
 1890.0
 3120.0
-# Output Data
+### Output Data
 J-values
 Photolysis rates for atmospheric species at different altitudes:
 
@@ -89,27 +89,26 @@ Surface-only: J-values at ground level
 Full 2D: Complete altitude-species matrix
 Altitude-integrated: Column-integrated values
 
-Storage Formats
-
+### Storage Formats
 Zarr: Recommended for large datasets
 NumPy: Simple .npz format
 HDF5: Industry standard scientific format
 
-Configuration Options
-Processing Methods
+### Configuration Options
+#### Processing Methods
 
 surface_only: Extract ground-level photolysis rates
 full_2d: Preserve complete altitude×species arrays
 altitude_integrated: Integrate over atmospheric column
 flatten: Simple 1D flattening
 
-Checkpointing
+#### Checkpointing
 Automatic resume capability using fastj_checkpoint.json:
 json{
   "completed_runs": ["hash1", "hash2", ...],
   "saved_runs": ["hash1", "hash2", ...]
 }
-Performance Optimization
+#### Performance Optimization
 Memory Management
 
 Uses Dask for out-of-core computation
@@ -155,7 +154,7 @@ list_saved_runs(): Browse available datasets
 debug_saved_files(): Troubleshoot file issues
 analyze_results_quick(): Basic statistical analysis
 
-Troubleshooting
+# Troubleshooting
 Common Issues
 
 Missing executable: Ensure fastJX is compiled and executable
@@ -163,12 +162,12 @@ Memory errors: Reduce chunk sizes or use incremental saving
 File format errors: Check CSV structure and headers
 Checkpoint corruption: Delete and restart from clean state
 
-Debug Functions
+# Debug Functions
 python# Check saved files
 from multiRunFastJ import debug_saved_files
 debug_saved_files('fastj_results')
 
-# List available runs
+## List available runs
 from multiRunFastJ import list_saved_runs
 runs = list_saved_runs()
 Contributing
