@@ -53,3 +53,6 @@ aerosol_heights/
 
 # Jupyter notebooks checkpoints
 .ipynb_checkpoints/
+
+# Deprecated folder
+deprecated/
