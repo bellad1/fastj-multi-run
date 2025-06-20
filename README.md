@@ -37,9 +37,14 @@ Python 3.7+
 Sufficient disk space for results (varies by campaign size)
 
 ## Quick Start
-1. Data Preparation \
-Ensure your CSV files are organized as:
-aerosol_fastJcsvFiles/...
+1. Data Preparation: \
+This code was designed to focus on impacts of different aerosol types.
+Therefore, CSV input data files must contain an 'aerosol_tag', such as
+'Urban_Pollution', which is proceeded by the aerosol property and an underscore
+(AOD_, SSA_, G_). \
+\
+As an example, for 'Urban_Pollution', ensure your CSV files are organized as:\
+aerosol_csvFiles/...
     ...AOD_Urban_Pollution.csv
     ...SSA_Urban_Pollution.csv
     ...G_Urban_Pollution.csv
