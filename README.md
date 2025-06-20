@@ -1,13 +1,7 @@
 # Fast-J Multi-Run Atmospheric Photochemistry Model
 
 A comprehensive Python-based system for running multiple Fast-J photolysis rate
-calculations with user provided aerosol properties, aerosol optical depth (AOD),
-single scattering albedo (SSA), asymmetry factor (G), and aerosol layer top
-height. NOTE: this code was originally designed to calculate photolsyis rates
-using aerosol property retrievals from the NASA 
-[ACTIVATE](https://science.larc.nasa.gov/activate/) campaign and the
-[MAPP](https://opg.optica.org/ao/fulltext.cfm?uri=ao-57-10-2394&id=383916)
-retrieval framework (Stamnes et al., 2018).
+calculations with user provided aerosol properties.
 
 ## 📋 Table of Contents
 - [Overview](#overview)
@@ -16,9 +10,17 @@ retrieval framework (Stamnes et al., 2018).
 
 ## Overview
 
+Necessary aerosol properties to run this code are aerosol optical depth (AOD),
+single scattering albedo (SSA), asymmetry factor (G), and aerosol layer top
+height. NOTE: this code was originally designed to calculate photolsyis rates
+using aerosol property retrievals from the NASA 
+[ACTIVATE](https://science.larc.nasa.gov/activate/) campaign and the
+[MAPP](https://opg.optica.org/ao/fulltext.cfm?uri=ao-57-10-2394&id=383916)
+retrieval framework (Stamnes et al., 2018).
+
 This repository contains tools for:
-- Processing aerosol optical properties from RSP (Research Scanning Polarimeter) and HSRL (High Spectral Resolution Lidar) measurements
-- Running Fast-J photolysis rate calculations with varying aerosol conditions
+- Processing retrieved aerosol properties from RSP (Research Scanning Polarimeter) and HSRL (High Spectral Resolution Lidar) measurements with the MAPP retrieval framework.
+- Running Fast-J photolysis rate calculations with varying aerosol contditions
 - Managing large-scale computational campaigns with checkpointing
 - Analyzing and storing results efficiently using Dask arrays
 
@@ -32,21 +34,24 @@ This repository contains tools for:
 - **Data validation**: Hash-based run identification and duplicate prevention
 
 ## System Requirements
+- Fast-J executable (compiled from Fortran source)
+- Python 3.7+
+- Sufficient disk space for results (varies by campaign size)
 
 ### Core Dependencies
+python dependencies:
 ```
 pip install numpy scipy matplotlib pandas dask
+```
+fast-JX executable:
+```bash
+ln -snf /Path/To/FastJX/Executable/fastJX ./fastJX
 ```
 
 ### Optional Dependencies (for enhanced functionality)
 ```
 pip install zarr h5py  # For efficient large array storage
 ```
-
-### System Requirements
-- Fast-J executable (compiled from Fortran source)
-- Python 3.7+
-- Sufficient disk space for results (varies by campaign size)
 
 ## Quick Start
 ### 1. Data Preparation
