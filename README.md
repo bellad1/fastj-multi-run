@@ -1,6 +1,12 @@
 # Fast-J Multi-Run Atmospheric Photochemistry Model
 
-A comprehensive Python-based system for running multiple Fast-J radiative transfer calculations with aerosol property data from ACTIVATE campaign measurements.
+A comprehensive Python-based system for running multiple Fast-J photolysis rate
+calculations with user provided aerosol properties, aerosol optical depth (AOD),
+single scattering albedo (SSA), asymmetry factor (G), and aerosol layer top
+height. NOTE: this code was originally designed to calculate photolsyis rates
+using aerosol property retrievals from the NASA ACTIVATE campaign and the
+[MAPP]https://opg.optica.org/ao/fulltext.cfm?uri=ao-57-10-2394&id=383916
+retrieval framework.
 
 ## Overview
 
@@ -91,7 +97,7 @@ save_format = 'zarr'  # or 'numpy', 'hdf5'
 ## Data Input Format
 
 ### Aerosol Properties
-CSV files with wavelengths in header row and measurements in subsequent rows:
+CSV files with wavelengths in header row and retrieval values in subsequent rows:
 ```csv
 187.0,191.0,193.0,196.0,...
 0.123,0.145,0.156,0.167,...
