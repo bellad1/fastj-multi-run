@@ -27,7 +27,9 @@ pip install numpy scipy matplotlib pandas dask
 ```
 
 ### Optional Dependencies (for enhanced functionality)
-bashpip install zarr h5py  # For efficient large array storage
+```
+pip install zarr h5py  # For efficient large array storage
+```
 
 ### System Requirements
 Fast-J executable (compiled from Fortran source)
@@ -37,10 +39,10 @@ Sufficient disk space for results (varies by campaign size)
 ## Quick Start
 1. Data Preparation
 Ensure your CSV files are organized as:
-aerosol_fastJcsvFiles/
-├── AOD_Urban_Pollution.csv
-├── SSA_Urban_Pollution.csv
-└── G_Urban_Pollution.csv
+aerosol_fastJcsvFiles/...
+    ...AOD_Urban_Pollution.csv
+    ...SSA_Urban_Pollution.csv
+    ...G_Urban_Pollution.csv
 
 aerosol_heights/
 └── HSRL_Urban_Pollution_hts.csv
