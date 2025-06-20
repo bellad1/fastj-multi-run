@@ -7,7 +7,7 @@ height. NOTE: this code was originally designed to calculate photolsyis rates
 using aerosol property retrievals from the NASA 
 [ACTIVATE](https://science.larc.nasa.gov/activate/) campaign and the
 [MAPP](https://opg.optica.org/ao/fulltext.cfm?uri=ao-57-10-2394&id=383916)
-retrieval framework.
+retrieval framework (Stamnes et al., 2018).
 
 ## Overview
 
@@ -39,9 +39,9 @@ pip install zarr h5py  # For efficient large array storage
 ```
 
 ### System Requirements
-Fast-J executable (compiled from Fortran source)
-Python 3.7+
-Sufficient disk space for results (varies by campaign size)
+- Fast-J executable (compiled from Fortran source)
+- Python 3.7+
+- Sufficient disk space for results (varies by campaign size)
 
 ## Quick Start
 ### 1. Data Preparation: \
@@ -67,6 +67,7 @@ from multiRunFastJ import main
 ### Run with default configuration
 results_array, metadata = main()
 ```
+
 ### 3. Custom Configuration
 Edit the configuration section in multiRunFastJ.py:
 ```python
@@ -98,14 +99,19 @@ save_format = 'zarr'  # or 'numpy', 'hdf5'
 ## Data Input Format
 
 ### Aerosol Properties
-CSV files with wavelengths in header row and retrieval values in subsequent rows:
+IMPORTANT: aerosol properties at the retrieved wavelengths had to be
+interpolated/extrapolated to Fast-J wavelengths. This introduces uncertainty
+that has not been quantified.
+
+CSV files with wavelengths in header row and aerosol property (AOD, SSA, G)
+retrieval values in subsequent rows:
 ```csv
 187.0,191.0,193.0,196.0,...
 0.123,0.145,0.156,0.167,...
 0.098,0.112,0.125,0.134,...
 ```
 ### Height Data
-Single column CSV with header:
+Single column CSV with header (NOTE: header contents not important):
 ```csv
 HSRL Aerosol Heights for Urban/Pollution
 2450.0
@@ -151,32 +157,42 @@ Automatic resume capability using fastj_checkpoint.json:
 - Configurable chunking for large arrays
 - Incremental saving to prevent data loss
 
-Computational Efficiency
+### Computational Efficiency
+- Duplicate run detection via hashing
+- Parallel processing capability (future enhancement)
+- Optimized I/O for large campaigns
 
-Duplicate run detection via hashing
-Parallel processing capability (future enhancement)
-Optimized I/O for large campaigns
+## Example Workflows
 
-Example Workflows
-1. Small Test Run
-python# Test with 10 cases
+### 1. Small Test Run
+```python
+# Test with 10 cases
 max_runs = 10
 output_method = 'surface_only'
 save_format = 'numpy'
-2. Production Campaign
-python# Full dataset processing
+```
+### 2. Process entire ACTIVATE Campaign
+```python
+# Full dataset processing
 max_runs = None  # All available
 output_method = 'full_2d'
 save_format = 'zarr'
 incremental_save = True
 save_every = 50
-3. Resume Interrupted Run
-python# Automatically resumes from checkpoint
+```
+
+### 3. Resume Interrupted Run
+```python
+# Automatically resumes from checkpoint
 append_to_existing = True
 fixed_run_name = 'Urban_Pollution'
-Results Analysis
-Loading Saved Results
-pythonfrom multiRunFastJ import load_results
+```
+
+## Results Analysis
+
+### Loading Saved Results
+```python
+from multiRunFastJ import load_results
 
 # Load by run name
 results, metadata = load_results(run_name='Urban_Pollution_20241201')
@@ -184,52 +200,65 @@ results, metadata = load_results(run_name='Urban_Pollution_20241201')
 # Quick analysis
 from multiRunFastJ import analyze_results_quick
 analysis = analyze_results_quick(results, metadata)
-Available Tools
+```
 
-list_saved_runs(): Browse available datasets
-debug_saved_files(): Troubleshoot file issues
-analyze_results_quick(): Basic statistical analysis
+### Available Tools
+- `list_saved_runs()`: Browse available datasets
+- `debug_saved_files()`: Troubleshoot file issues
+- `analyze_results_quick()`: Basic statistical analysis
 
-# Troubleshooting
-Common Issues
+## Troubleshooting
 
-Missing executable: Ensure fastJX is compiled and executable
-Memory errors: Reduce chunk sizes or use incremental saving
-File format errors: Check CSV structure and headers
-Checkpoint corruption: Delete and restart from clean state
+### Common Issues
+1. **Missing executable**: Ensure fastJX is compiled and executable. Create
+   a symbolic link from the fastJX source directory to your working directory
+with 
+```bash
+ln -snf /Path/To/FastJX/Executable/fastJX ./fastJX
+```
+2. **Memory errors**: Reduce chunk sizes or use incremental saving
+3. **File format errors**: Check CSV structure and headers
+4. **Checkpoint corruption**: Delete and restart from clean state
 
 # Debug Functions
-python# Check saved files
+```python
+# Check saved files
 from multiRunFastJ import debug_saved_files
 debug_saved_files('fastj_results')
 
 ## List available runs
 from multiRunFastJ import list_saved_runs
 runs = list_saved_runs()
-Contributing
+```
 
-Fork the repository
-Create a feature branch (git checkout -b feature/new-analysis)
-Commit changes (git commit -am 'Add new analysis method')
-Push to branch (git push origin feature/new-analysis)
-Create Pull Request
+## Contributing
 
-Citation
+1. Fork the repository
+2. Create a feature branch (git checkout -b feature/new-analysis)
+3. Commit changes (git commit -am 'Add new analysis method')
+4. Push to branch (git push origin feature/new-analysis)
+5. Create Pull Request
+
+## Citation
 If you use this code in your research, please cite:
+```
 [Your paper citation here]
-License
-[Specify your license here - MIT, GPL, etc.]
-Contact
+```
 
-Author: [Your name]
-Email: [Your email]
-Institution: [Your institution]
+## License
+Open-source and not licensed 
 
-Acknowledgments
+## Contact
 
-ACTIVATE campaign for aerosol measurement data
-Fast-J development team
-NASA Goddard Space Flight Center
+- **Author**: Adam Bell
+- **Email**: adamdrakebell@gmail.com
+- **Institution**: N/A
+
+## Acknowledgments
+
+- ACTIVATE campaign and science team for aerosol measurement data
+- Stamnes et al., for MAPP aerosol property retrievals
+- Prather et al., for development of Fast-J software
 
 
 # Fast-J Multi-Run Analysis System
