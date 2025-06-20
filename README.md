@@ -22,7 +22,7 @@ This repository contains tools for:
 ## Requirements
 
 ### Core Dependencies
-pip install numpy scipy matplotlib pandas dask
+```pip install numpy scipy matplotlib pandas dask
 
 ### Optional Dependencies (for enhanced functionality)
 bashpip install zarr h5py  # For efficient large array storage
@@ -32,7 +32,7 @@ Fast-J executable (compiled from Fortran source)
 Python 3.7+
 Sufficient disk space for results (varies by campaign size)
 
-### Quick Start
+## Quick Start
 1. Data Preparation
 Ensure your CSV files are organized as:
 aerosol_fastJcsvFiles/
