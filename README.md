@@ -22,7 +22,9 @@ This repository contains tools for:
 ## Requirements
 
 ### Core Dependencies
-```pip install numpy scipy matplotlib pandas dask
+```
+pip install numpy scipy matplotlib pandas dask
+```
 
 ### Optional Dependencies (for enhanced functionality)
 bashpip install zarr h5py  # For efficient large array storage
