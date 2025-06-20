@@ -4,8 +4,9 @@ A comprehensive Python-based system for running multiple Fast-J photolysis rate
 calculations with user provided aerosol properties, aerosol optical depth (AOD),
 single scattering albedo (SSA), asymmetry factor (G), and aerosol layer top
 height. NOTE: this code was originally designed to calculate photolsyis rates
-using aerosol property retrievals from the NASA ACTIVATE campaign and the
-[MAPP]https://opg.optica.org/ao/fulltext.cfm?uri=ao-57-10-2394&id=383916
+using aerosol property retrievals from the NASA 
+[ACTIVATE](https://science.larc.nasa.gov/activate/) campaign and the
+[MAPP](https://opg.optica.org/ao/fulltext.cfm?uri=ao-57-10-2394&id=383916)
 retrieval framework.
 
 ## Overview
