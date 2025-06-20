@@ -44,7 +44,7 @@ pip install zarr h5py  # For efficient large array storage
 - Sufficient disk space for results (varies by campaign size)
 
 ## Quick Start
-### 1. Data Preparation: \
+### 1. Data Preparation
 This code was designed to focus on impacts of different aerosol types.
 Therefore, CSV input data files must contain an 'aerosol_tag', such as
 'Urban_Pollution', which is proceeded by the aerosol property and an underscore
