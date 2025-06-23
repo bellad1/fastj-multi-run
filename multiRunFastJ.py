@@ -1623,15 +1623,57 @@ def main():
     print("Multi-Run Fast-J with Checkpointing")
     print("="*60)
 
-    # Define directories containing csv files
-    csvDir_aerosolProps = '/Users/adambell/Research/photochemistry/fastj-multi-run/aerosol_fastJcsvFiles'
-    csvDir_aerosolHeight = '/Users/adambell/Research/photochemistry/fastj-multi-run/aerosol_heights'
+    # ========================================================================
+    # CONFIGURATION SECTION - Modify these parameters as needed
+    # ========================================================================
+    # Set aerosol tag name. NOTE: must match aerosol_tag in csvFiles (i.e., if
+    # csv files contain properties on Pol_Marine aerosols (with files,
+    # AOD_Pol_Marine.csv, SSA_Pol_Marine.csv, ...), then aerosol_tag
+    # is 'Pol_Marine'
+    aerosol_tag = 'Marine'
+
+    # Define directories containing csv files (showing with testData)
+    # csvDir_aerosolProps = '/Users/adambell/Research/photochemistry/fastj-multi-run/aerosol_fastJcsvFiles'
+    # csvDir_aerosolHeight = '/Users/adambell/Research/photochemistry/fastj-multi-run/aerosol_heights'
+    csvDir_aerosolProps = '/Users/adambell/Research/photochemistry/fastj-multi-run/testData/aerosol_properties'
+    # NOTE: for the heights in testData, we have RSP and HSRL derived heights. Don't forget to update the path
+    csvDir_aerosolHeight = '/Users/adambell/Research/photochemistry/fastj-multi-run/testData/aerosol_heights/HSRL'
+
+    # Number of runs to process (None = all available)
+    max_runs = 100  # SET TO 1 FOR TESTING, any number for chunks, or None (all)
+
+    # Output processing options
+    store_mean_intensity = False  # Set to True if you want mean intensity data
+    output_method = 'full_2d'  # Options: 'surface_only', 'altitude_integrated', 'flatten', 'full_2d'
+
+    # File saving options
+    append_to_existing = True
+    fixed_run_name = aerosol_tag  # This is different from aerosol_tag and can be named whatever
+    save_format = 'zarr'  # Options: 'zarr', 'numpy', 'hdf5'
+
+    # Incremental saving (recommended for long runs)
+    incremental_save = True  # save results periodically
+    save_every = 20  # save after every 20 runs
+
+    # File paths
+    checkpoint_file = 'fastj_checkpoint.json'
+    executable_path = './fastJX'
+
+    print("\nRun Configuration:")
+    print(f"  - Max runs to process: {max_runs if max_runs else 'ALL'}")
+    print(f"  - Store mean intensity: {store_mean_intensity}")
+    print(f"  - Output method: {output_method}")
+    print(f"  - Append to existing: {append_to_existing}")
+    print(f"  - Fixed run name: {fixed_run_name}")
+    print(f"  - Incremental save: {incremental_save} (every {save_every} runs)")
+    print(f"  - Checkpoint file: {checkpoint_file}")
+    print(f"  - Executable: {executable_path}")
 
     # Define individual property file names
-    csvName_AOD = 'AOD_Urban_Pollution.csv'
-    csvName_SSA = 'SSA_Urban_Pollution.csv'
-    csvName_G = 'G_Urban_Pollution.csv'
-    csvName_height = 'HSRL_Urban_Pollution_hts.csv'
+    csvName_AOD = 'AOD_' + aerosol_tag + '.csv'
+    csvName_SSA = 'SSA_' + aerosol_tag + '.csv'
+    csvName_G = 'G_' + aerosol_tag + '.csv'
+    csvName_height = aerosol_tag + '_hts.csv'
 
     # Get full file paths
     file_name_AOD = os.path.join(csvDir_aerosolProps, csvName_AOD)
@@ -1653,40 +1695,6 @@ def main():
     print(f"  - SSA measurements: {ssa_data.shape}")
     print(f"  - G measurements: {g_data.shape}")
     print(f"  - Height measurements: {len(height_data)}")
-
-    # ========================================================================
-    # CONFIGURATION SECTION - Modify these parameters as needed
-    # ========================================================================
-
-    # Number of runs to process (None = all available)
-    max_runs = 100  # SET TO 1 FOR TESTING, any number for chunks, or None (all)
-
-    # Output processing options
-    store_mean_intensity = False  # Set to True if you want mean intensity data
-    output_method = 'full_2d'  # Options: 'surface_only', 'altitude_integrated', 'flatten', 'full_2d'
-
-    # File saving options
-    append_to_existing = True
-    fixed_run_name = 'Urban_Pollution'
-    save_format = 'zarr'  # Options: 'zarr', 'numpy', 'hdf5'
-
-    # Incremental saving (recommended for long runs)
-    incremental_save = True  # save results periodically
-    save_every = 20  # save after every 20 runs
-
-    # File paths
-    checkpoint_file = 'fastj_checkpoint.json'
-    executable_path = './fastJX'
-
-    print("\nRun Configuration:")
-    print(f"  - Max runs to process: {max_runs if max_runs else 'ALL'}")
-    print(f"  - Store mean intensity: {store_mean_intensity}")
-    print(f"  - Output method: {output_method}")
-    print(f"  - Append to existing: {append_to_existing}")
-    print(f"  - Fixed run name: {fixed_run_name}")
-    print(f"  - Incremental save: {incremental_save} (every {save_every} runs)")
-    print(f"  - Checkpoint file: {checkpoint_file}")
-    print(f"  - Executable: {executable_path}")
 
     # ========================================================================
 
