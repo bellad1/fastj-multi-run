@@ -7,6 +7,7 @@ calculations with user provided aerosol properties.
 - [Overview](#overview)
 - [Features](#features)
 - [System Requirements](#system-requirements)
+- [Quick Start](#quick-start)
 
 ## Overview
 
