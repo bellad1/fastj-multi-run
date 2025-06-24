@@ -57,9 +57,9 @@ pip install zarr h5py  # For efficient large array storage
 ## Quick Start
 ### 1. Data Preparation
 This code was designed to focus on impacts of different aerosol types.
-Therefore, CSV input data files must contain an 'aerosol_tag', such as
+**Therefore, CSV input data files must contain an 'aerosol_tag', such as
 'Urban_Pollution', which is proceeded by the aerosol property and an underscore
-(AOD_, SSA_, G_).\
+(AOD_, SSA_, G_).**\
 \
 As an example, for 'Urban_Pollution', ensure your CSV files are organized as:\
 ```
@@ -71,7 +71,11 @@ aerosol_fastJcsvFiles/
 aerosol_heights/
 └── HSRL_Urban_Pollution_hts.csv
 ```
-### 2. Basic Usage
+### 2. Basic Usage (running with testData)
+**NOTE:** Before proceeding, make sure you have a symbolic link to the fast-J
+executable in this working directory (see instructions above). If you name the
+fast-J executable the same as above, no edits are needed to multiRunFastJ.py
+to run with testData.
 ```python
 from multiRunFastJ import main
 
@@ -82,16 +86,39 @@ results_array, metadata = main()
 ### 3. Custom Configuration
 Edit the configuration section in multiRunFastJ.py:
 ```python
-# Number of runs (None = all available)
-max_runs = 100
+# ========================================================================
+# CONFIGURATION SECTION - Modify these parameters as needed
+# ========================================================================
+# Set aerosol tag name. NOTE: must match aerosol_tag in csvFiles (i.e., if
+# csv files contain properties on Pol_Marine aerosols (with files,
+# AOD_Pol_Marine.csv, SSA_Pol_Marine.csv, ...), then aerosol_tag
+# is 'Pol_Marine'
+aerosol_tag = 'Marine'
 
-### Output processing
-store_mean_intensity = False
-output_method = 'surface_only'  # or 'full_2d', 'altitude_integrated'
+# Define directories containing csv files (showing with testData)
+csvDir_aerosolProps = './testData/aerosol_properties'
+# NOTE: for the heights in testData, we have RSP and HSRL derived heights. Don't forget to update the path
+csvDir_aerosolHeight = './testData/aerosol_heights/HSRL'
 
-### File management
+# Number of runs to process (None = all available)
+max_runs = 100  # SET TO 1 FOR TESTING, any number for chunks, or None (all)
+
+# Output processing options
+store_mean_intensity = False  # Set to True if you want mean intensity data
+output_method = 'full_2d'  # Options: 'surface_only', 'altitude_integrated', 'flatten', 'full_2d'
+
+# File saving options
 append_to_existing = True
-save_format = 'zarr'  # or 'numpy', 'hdf5'
+fixed_run_name = aerosol_tag  # This is different from aerosol_tag and can be named whatever
+save_format = 'zarr'  # Options: 'zarr', 'numpy', 'hdf5'
+
+# Incremental saving (recommended for long runs)
+incremental_save = True  # save results periodically
+save_every = 20  # save after every 20 runs
+
+# File paths
+checkpoint_file = 'fastj_checkpoint.json'
+executable_path = './fastJX'  # NOTE: must match fast-Jx executable
 ```
 
 ## File Structure
