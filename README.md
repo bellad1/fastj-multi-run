@@ -137,12 +137,24 @@ working_directory/
 ├── multiRunFastJ.py              # Main multi-run script
 ├── README.md                     # This file
 └── requirements.txt              # Python dependencies
+
 utils/
 ├── collocation_multiFile.py      # Collocates RSP/HSRL, extracts aerosol
                                     properties, and writes input csv files
 ├── analyze_fastJ_output.py       # Load, analyze, visualize fast-J
-├── run_conditions_tracker.py     # Store/retrieve exact run conditions for
+└── run_conditions_tracker.py     # Store/retrieve exact run conditions for
                                     each hash
+
+testData/
+├── aerosol_properties            # Directory with aerosol property csv files
+    ├── AOD_Marine.csv            # AOD test data for 'Marine' aerosol_tag 
+    ├── SSA_Marine.csv            # SSA test data for 'Marine' aerosol_tag 
+    └── G_Marine.csv              # G test data for 'Marine' aerosol_tag 
+├── aerosol_heights               # Directory with aerosol layer height csv files
+    ├── RSP                       # RSP derived aerosol layer height directory
+        └── Marine_hts.csv        # Aerosol layer height for 'Marine' tag (RSP)
+    ├── HSRL                      # HSRL derived aerosol layer height directory
+        └── Marine_hts.csv        # Aerosol layer height for 'Marine' tag (HSRL)
 ```
 
 ## Input Data
