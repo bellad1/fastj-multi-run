@@ -8,6 +8,9 @@ calculations with user provided aerosol properties.
 - [Features](#features)
 - [System Requirements](#system-requirements)
 - [Quick Start](#quick-start)
+- [File Structure](#file-structure)
+- [Input Data](#input-data)
+- [Output Data](#input-data)
 
 ## Overview
 
@@ -83,7 +86,7 @@ from multiRunFastJ import main
 results_array, metadata = main()
 ```
 
-### 3. Custom Configuration
+### 3. Custom Configuration (example aerosol_tag = 'Marine')
 Edit the configuration section in multiRunFastJ.py:
 ```python
 # ========================================================================
@@ -124,17 +127,20 @@ executable_path = './fastJX'  # NOTE: must match fast-Jx executable
 ## File Structure
 
 ```
-├── multiRunFastJ.py           # Main multi-run script
+├── multiRunFastJ.py              # Main multi-run script
 ├── collocationTest_multiFile.py  # Data collocation and processing
-├── AOD_Urban_Pollution.csv    # Aerosol optical depth data
+├── AOD_Urban_Pollution.csv       # Aerosol optical depth data
 ├── HSRL_Urban_Pollution_hts.csv  # Aerosol layer heights
-├── jVals.dat                  # Example Fast-J output
-├── meanIntensity.dat          # Example mean intensity output
-├── README.md                  # This file
-└── requirements.txt           # Python dependencies
+├── jVals.dat                     # Example Fast-J output
+├── meanIntensity.dat             # Example mean intensity output
+├── README.md                     # This file
+└── requirements.txt              # Python dependencies
 ```
 
-## Data Input Format
+## Input Data
+To run this code, the user is responsible for creating aerosol property
+(AOD, SSA, G) and aerosol layer height input files. This is a total of 4 input
+files for each aerosol type (e.g., aerosol_tag)
 
 ### Aerosol Properties
 **IMPORTANT:** aerosol properties at the retrieved wavelengths had to be
@@ -158,6 +164,8 @@ HSRL Aerosol Heights for Urban/Pollution
 1890.0
 3120.0
 ```
+**NOTE:** The number of rows of data for aerosol properties/heights should
+match
 
 ## Output Data
 
