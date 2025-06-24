@@ -46,7 +46,7 @@ run_conditions.json
 # Output directories
 fastj_results/
 aerosol_fastJcsvFiles/
-aerosol_heights/
+aerosol_fastJheights/
 
 # Log files
 *.log
