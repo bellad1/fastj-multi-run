@@ -115,6 +115,8 @@ The overall flow of this script is:
 
 5) write csv files
 ```
+NOTE: The user must edit main() to update the names and path of the RSP and HSRL
+retrieval files.
 
 ### 3. Basic Usage (running with testData)
 **NOTE:** Before proceeding, make sure you have a symbolic link to the fast-J
