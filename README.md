@@ -100,15 +100,19 @@ make sure the paths match accordingly.
 The overall flow of this script is:
 ```
 1) we set a threshold particular percentage of aerosol in the HSRL column.  
-Meaning, if threshold = 0.5, then if half of the vertical bins from HSRL    
-aerosol typing contain Marine aerosols, then we assume the retrieved aerosol # E: line too long (80 > 79 characters)
-properties are "Marine" (NOTE: this threshold hasn't been rigorously tested) # E: line too long (80 > 79 characters)
+   Meaning, if threshold = 0.5, then if half of the vertical bins from HSRL    
+   aerosol typing contain Marine aerosols, then we assume the retrieved aerosol
+   properties are "Marine" (NOTE: this threshold hasn't been rigorously tested)
+
 2) collocate HSRL and RSP data points based on minimum criteria below       
-3) collect RSP-MAPP retrieved SSA, AOD, G and RSP and HSRL aerosol layer heights # E: line too long (84 > 79 characters)
-4) interpolate/extrapolate these properties to fast-J wavelengths (NOTE:    
-some interp/extrap can introduce unphysical negative values. This code accounts # E: line too long (83 > 79 characters)
-and corrects for this. If you use a different interp/extrap scheme ensure you # E: line too long (81 > 79 characters)
-avoid negative values.)                                                     
+
+3) collect RSP-MAPP retrieved SSA, AOD, G and RSP and HSRL aerosol layer heights
+
+4) interpolate/extrapolate these properties to fast-J wavelengths (NOTE: some
+   interp/extrap can introduce unphysical negative values. This code accounts
+   and corrects for this. If you use a different interp/extrap scheme ensure you
+   avoid negative values.)                                                     
+
 5) write csv files
 ```
 
