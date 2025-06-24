@@ -314,9 +314,20 @@ analysis = analyze_results_quick(results, metadata)
 ```
 
 ### Available Tools
+The following are available inside multiRunFastJ.py:
 - `list_saved_runs()`: Browse available datasets
 - `debug_saved_files()`: Troubleshoot file issues
 - `analyze_results_quick()`: Basic statistical analysis
+
+The utils directory contains additional tools for examining the output and the
+run conditions. These options can be seen by running each python script as:
+```bash
+python3 run_conditions_tracker.py
+``` 
+or
+```bash
+python3 analyze_fastJ_output.py
+``` 
 
 ## Troubleshooting
 
