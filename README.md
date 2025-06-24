@@ -81,15 +81,19 @@ This code was designed to focus on impacts of different aerosol types.
 'Urban_Pollution', which is proceeded by the aerosol property and an underscore
 (AOD_, SSA_, G_).**\
 \
-As an example, for 'Urban_Pollution', ensure your CSV files are organized as:\
+As an example, for 'Urban_Pollution', ensure your CSV files are organized as:
 ```
-aerosol_fastJcsvFiles/
+aerosol_properties/
 ├── AOD_Urban_Pollution.csv
 ├── SSA_Urban_Pollution.csv
 └── G_Urban_Pollution.csv
 
 aerosol_heights/
-└── HSRL_Urban_Pollution_hts.csv
+└── Urban_Pollution_hts.csv
+
+NOTE: for heights in the test data we have RSP and HSRL retrieved heights, so
+make sure the paths match accordingly.
+
 ```
 ### 3. Basic Usage (running with testData)
 **NOTE:** Before proceeding, make sure you have a symbolic link to the fast-J
