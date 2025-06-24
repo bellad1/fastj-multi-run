@@ -136,7 +136,16 @@ executable_path = './fastJX'  # NOTE: must match fast-Jx executable
 working_directory/
 ├── multiRunFastJ.py              # Main multi-run script
 ├── README.md                     # This file
-└── requirements.txt              # Python dependencies
+├── requirements.txt              # Python dependencies
+├── CTM_atmo.dat                  # Necessary fast-J run file
+├── FJX_spec.dat                  # Necessary fast-J run file
+├── atmos_std.dat                 # Necessary fast-J run file
+├── atmos_h2och4.dat              # Necessary fast-J run file
+├── FJX_scat-aer.dat              # Necessary fast-J run file
+├── FJX_scat-cld.dat              # Necessary fast-J run file
+├── FJX_scat-ssa.dat              # Necessary fast-J run file
+├── FJX_scat-UMa.dat              # Necessary fast-J run file
+└── FJX_j2j.dat                   # Necessary fast-J run file
 
 utils/
 ├── collocation_multiFile.py      # Collocates RSP/HSRL, extracts aerosol
