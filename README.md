@@ -133,16 +133,16 @@ executable_path = './fastJX'  # NOTE: must match fast-Jx executable
 ## File Structure
 
 ```
+working_directory/
 ├── multiRunFastJ.py              # Main multi-run script
 ├── README.md                     # This file
 └── requirements.txt              # Python dependencies
 utils/
 ├── collocation_multiFile.py      # Collocates RSP/HSRL, extracts aerosol
                                     properties, and writes input csv files
-├── analyze_fastJ_output.py       # Script to load, analyze, visualize fast-J
-                                    results
-├── run_conditions_tracker.py     # Script to store/retrieve exact run
-                                    conditions for each hash/
+├── analyze_fastJ_output.py       # Load, analyze, visualize fast-J
+├── run_conditions_tracker.py     # Store/retrieve exact run conditions for
+                                    each hash
 ```
 
 ## Input Data
