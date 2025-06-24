@@ -64,7 +64,18 @@ pip install zarr h5py  # For efficient large array storage
 ```
 
 ## Quick Start
-### 1. Data Preparation
+### 1. Create python virtual environment and load packages
+Create the virtual environment and activate:
+```bash
+python3 -m venv myenv
+source myenv/bin/activate
+```
+Install packages from requirements.txt with pip
+```bash
+pip install -r requirements.txt
+```
+
+### 2. Data Preparation
 This code was designed to focus on impacts of different aerosol types.
 **Therefore, CSV input data files must contain an 'aerosol_tag', such as
 'Urban_Pollution', which is proceeded by the aerosol property and an underscore
@@ -80,7 +91,7 @@ aerosol_fastJcsvFiles/
 aerosol_heights/
 └── HSRL_Urban_Pollution_hts.csv
 ```
-### 2. Basic Usage (running with testData)
+### 3. Basic Usage (running with testData)
 **NOTE:** Before proceeding, make sure you have a symbolic link to the fast-J
 executable in this working directory (see instructions above). If you name the
 fast-J executable the same as above, no edits are needed to multiRunFastJ.py
@@ -92,7 +103,7 @@ from multiRunFastJ import main
 results_array, metadata = main()
 ```
 
-### 3. Custom Configuration (example aerosol_tag = 'Marine')
+### 4. Custom Configuration (example aerosol_tag = 'Marine')
 Edit the configuration section in multiRunFastJ.py:
 ```python
 # ========================================================================
