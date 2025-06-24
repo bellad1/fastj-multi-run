@@ -11,6 +11,7 @@ calculations with user provided aerosol properties.
 - [File Structure](#file-structure)
 - [Input Data](#input-data)
 - [Output Data](#input-data)
+- [Configuration Options](#configuration-options)
 
 ## Overview
 
@@ -140,32 +141,32 @@ executable_path = './fastJX'  # NOTE: must match fast-Jx executable
 ## Input Data
 To run this code, the user is responsible for creating aerosol property
 (AOD, SSA, G) and aerosol layer height input files. This is a total of 4 input
-files for each aerosol type (e.g., aerosol_tag)
+files for each aerosol type (e.g., aerosol_tag).
+**NOTE:** The number of rows of data for aerosol properties/heights should
+match
 
 ### Aerosol Properties
 **IMPORTANT:** aerosol properties at the retrieved wavelengths had to be
 interpolated/extrapolated to Fast-J wavelengths. This introduces uncertainty
 that has not been quantified.
 
-CSV files with wavelengths in header row and aerosol property (AOD, SSA, G)
-retrieval values in subsequent rows (need a separate csv file for each
-property):
+**FORMAT:** CSV files with wavelengths in header row and aerosol property
+(AOD, SSA, G) retrieval values in subsequent rows (need a separate csv file
+for each property):
 ```csv
 187.0,191.0,193.0,196.0,...
 0.123,0.145,0.156,0.167,...
 0.098,0.112,0.125,0.134,...
 ```
 ### Height Data
-Single column CSV with header (NOTE: header contents not important, just ensure
-single line):
+**FORMAT:** Single column CSV with header (header contents not important,
+just ensure header is single line):
 ```csv
 HSRL Aerosol Heights for Urban/Pollution
 2450.0
 1890.0
 3120.0
 ```
-**NOTE:** The number of rows of data for aerosol properties/heights should
-match
 
 ## Output Data
 
