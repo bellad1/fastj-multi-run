@@ -14,6 +14,9 @@ calculations with user provided aerosol properties.
 - [Configuration Options](#configuration-options)
 - [Example Usage](#example-usage)
 - [Analyzing Results](#analyzing-results)
+- [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
+- [Citation](#citation)
 
 ## Overview
 
@@ -287,13 +290,13 @@ runs = list_saved_runs()
 5. Create Pull Request
 
 ## Citation
-If you use this code in your research, please cite:
-```
-[Your paper citation here]
-```
+
+If you use this code in published research, acknowledgment is sufficient, no
+citation needed. However, fast-J use should be appropriateley cited.
 
 ## License
-Open-source and not licensed 
+
+This code is open-source and not licensed. 
 
 ## Contact
 
