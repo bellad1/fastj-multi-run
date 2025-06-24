@@ -1633,11 +1633,9 @@ def main():
     aerosol_tag = 'Marine'
 
     # Define directories containing csv files (showing with testData)
-    # csvDir_aerosolProps = '/Users/adambell/Research/photochemistry/fastj-multi-run/aerosol_fastJcsvFiles'
-    # csvDir_aerosolHeight = '/Users/adambell/Research/photochemistry/fastj-multi-run/aerosol_heights'
-    csvDir_aerosolProps = '/Users/adambell/Research/photochemistry/fastj-multi-run/testData/aerosol_properties'
+    csvDir_aerosolProps = './testData/aerosol_properties'
     # NOTE: for the heights in testData, we have RSP and HSRL derived heights. Don't forget to update the path
-    csvDir_aerosolHeight = '/Users/adambell/Research/photochemistry/fastj-multi-run/testData/aerosol_heights/HSRL'
+    csvDir_aerosolHeight = './testData/aerosol_heights/HSRL'
 
     # Number of runs to process (None = all available)
     max_runs = 100  # SET TO 1 FOR TESTING, any number for chunks, or None (all)
@@ -1657,7 +1655,7 @@ def main():
 
     # File paths
     checkpoint_file = 'fastj_checkpoint.json'
-    executable_path = './fastJX'
+    executable_path = './fastJX'  # NOTE: must match fast-Jx executable
 
     print("\nRun Configuration:")
     print(f"  - Max runs to process: {max_runs if max_runs else 'ALL'}")
