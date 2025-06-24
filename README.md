@@ -8,7 +8,7 @@ calculations with user provided aerosol properties.
 - [Features](#features)
 - [System Requirements](#system-requirements)
 - [Quick Start](#quick-start)
-- [File Structure](#file-structure)
+- [Directory Structure](#directory-structure)
 - [Input Data](#input-data)
 - [Output Data](#input-data)
 - [Configuration Options](#configuration-options)
@@ -130,7 +130,7 @@ checkpoint_file = 'fastj_checkpoint.json'
 executable_path = './fastJX'  # NOTE: must match fast-Jx executable
 ```
 
-## File Structure
+## Directory Structure
 
 ```
 working_directory/
