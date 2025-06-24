@@ -12,6 +12,8 @@ calculations with user provided aerosol properties.
 - [Input Data](#input-data)
 - [Output Data](#input-data)
 - [Configuration Options](#configuration-options)
+- [Example Usage](#example-usage)
+- [Analyzing Results](#analyzing-results)
 
 ## Overview
 
@@ -176,6 +178,11 @@ Photolysis rates for atmospheric species at different altitudes:
 - Full 2D: Complete altitude-species matrix
 - Altitude-integrated: Column-integrated values
 
+### Mean intensity (optional)
+The mean intensity (actinic flux) at different altitudes for all fast-J
+wavelengths
+- Must set store_mean_intensity = True
+
 ### Storage Formats
 - **Zarr**: Recommended for large datasets
 - **NumPy**: Simple .npz format
@@ -198,35 +205,27 @@ Automatic resume capability using fastj_checkpoint.json:
 }
 ```
 
-## Performance Optimization
+## Example Usage
+Make the following changes in the "CONFIGURATION SECTION" of multiRunFastJ.py
 
-### Memory Management
-- Uses Dask for out-of-core computation
-- Configurable chunking for large arrays
-- Incremental saving to prevent data loss
-
-### Computational Efficiency
-- Duplicate run detection via hashing
-- Parallel processing capability (future enhancement)
-- Optimized I/O for large campaigns
-
-## Example Workflows
-
-### 1. Small Test Run
+### 1. Small test run (returning only surface j-values)
 ```python
 # Test with 10 cases
 max_runs = 10
 output_method = 'surface_only'
 save_format = 'numpy'
+fixed_run_name = 'Urban_Pollution'
 ```
-### 2. Process entire ACTIVATE Campaign
+
+### 2. Process entire field campaign (e.g., ACTIVATE)
 ```python
-# Full dataset processing
+# Full dataset processing (e.g., large csv files)
 max_runs = None  # All available
 output_method = 'full_2d'
 save_format = 'zarr'
 incremental_save = True
 save_every = 50
+fixed_run_name = 'Urban_Pollution'
 ```
 
 ### 3. Resume Interrupted Run
@@ -236,14 +235,14 @@ append_to_existing = True
 fixed_run_name = 'Urban_Pollution'
 ```
 
-## Results Analysis
+## Analyzing Results
 
 ### Loading Saved Results
 ```python
 from multiRunFastJ import load_results
 
-# Load by run name
-results, metadata = load_results(run_name='Urban_Pollution_20241201')
+# Load by fixed_run_name
+results, metadata = load_results(run_name='Urban_Pollution')
 
 # Quick analysis
 from multiRunFastJ import analyze_results_quick
