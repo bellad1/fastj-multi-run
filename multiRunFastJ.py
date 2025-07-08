@@ -3,7 +3,6 @@ import sys
 import os
 import numpy as np
 import csv
-import pandas as pd
 import subprocess
 import hashlib
 import dask.array as da
@@ -789,15 +788,71 @@ def save_results(results_array, metadata, output_dir='fastj_results',
 
             if append_mode and os.path.exists(results_file):
                 # Load existing data and append
+                print(f"  Loading existing zarr from: {results_file}")
                 existing_array = da.from_zarr(results_file)
-                print(f"  Found existing zarr with shape {existing_array.shape}")
 
-                # Combine arrays
-                combined_array = da.concatenate([existing_array, results_array], axis=0)
-                combined_array.to_zarr(results_file, overwrite=True)
-                print(f"  ✓ Appended to zarr: {results_file} (new shape: {combined_array.shape})")
+                # Quick fix: zarr is overwriting data with 0's, so we try numpy
+                # concatenation
+                print(f"  Using manual numpy concatenation to avoid zarr corruption...")
+                existing_np = existing_array.compute()  # Convert to numpy
+                new_np = results_array.compute()        # Convert to numpy
+                combined_np = np.concatenate([existing_np, new_np], axis=0)
+
+                if debug > 1:
+                    print(f"  Manual concat verification:")
+                    print(f"    - Combined shape: {combined_np.shape}")
+                    print(f"    - First 10 all zeros? {np.all(combined_np[:10] == 0)}")
+                    print(f"    - Last 1 non-zero count: {np.count_nonzero(combined_np[10:])}")
+
+                # Convert back to dask and save
+                combined_dask = da.from_array(combined_np, chunks=(min(100, combined_np.shape[0]), -1, -1))
+                combined_dask.to_zarr(results_file, overwrite=True)
+
+                print(f"  ✓ Manual concatenation saved to zarr: {results_file}")
+
+                # # Here we are concatenating existing_array and results_array
+                # # Check BEFORE concatenation
+                # existing_sample = existing_array.compute()
+                # print(f"  BEFORE concat - existing data check:")
+                # print(f"    - All zeros? {np.all(existing_sample == 0)}")
+                # print(f"    - Non-zero count: {np.count_nonzero(existing_sample)}")
+                # print(f"    - Range: {existing_sample.min():.2e} to {existing_sample.max():.2e}")
+
+                # print(f"  New data shape: {results_array.shape}")
+
+                # # Check new data (results_array)
+                # new_sample = results_array.compute()
+                # print(f"  New data check:")
+                # print(f"    - All zeros? {np.all(new_sample == 0)}")
+                # print(f"    - Non-zero count: {np.count_nonzero(new_sample)}")
+
+                # # Concatenate arrays
+                # print("  Concatenating arrays...")
+                # combined_array = da.concatenate([existing_array, results_array], axis=0)
+                # print(f"  Combined shape: {combined_array.shape}")
+
+                # # Check concatenated data before saving
+                # combined_sample = combined_array.compute()
+                # print(f"  AFTER concat, BEFORE save - combined data check:")
+                # print(f"    - First 10 all zeros? {np.all(combined_sample[:10] == 0)}")
+                # print(f"    - Last 1 non-zero count: {np.count_nonzero(combined_sample[10:])}")
+
+                # # OVerwrite zarr file completely
+                # print("  Overwriting zarr file with combined data...")
+                # combined_array.to_zarr(results_file, overwrite=True)
+                # # print(f"  ✓ Appended to zarr: {results_file} (new shape: {combined_array.shape})")
+
+                # # Verify what was actuall saved
+                # print(f"  Verifying saved file...")
+                # verify_array = da.from_zarr(results_file)
+                # verify_sample = verify_array.compute()
+                # print(f"  AFTER save - verification:")
+                # print(f"    - Saved shape: {verify_array.shape}")
+                # print(f"    - First 10 all zeros? {np.all(verify_sample[:10] == 0)}")
+                # print(f"    - Last 1 non-zero count: {np.count_nonzero(verify_sample[10:])}")
             else:
                 # Create new file
+                print("  Creating new zarr file...")
                 results_array.to_zarr(results_file, overwrite=True)
                 print(f"  ✓ Results saved to zarr: {results_file}")
 
@@ -1355,7 +1410,6 @@ def run_multi_fastj_cases(wavelengths, aod_data, ssa_data, g_data, height_data,
     run_metadata : dict
         Metadata about the runs including hashes and species info
     """
-
     # Load completed runs from checkpoint
     completed_hashes = load_checkpoint_file(checkpoint_file)
     print(f"Found {len(completed_hashes)} completed runs in checkpoint file")
@@ -1366,10 +1420,7 @@ def run_multi_fastj_cases(wavelengths, aod_data, ssa_data, g_data, height_data,
     n_g = len(g_data)
     n_heights = len(height_data)
 
-    # For this implementation, assume all property arrays have same length
-    # and we pair them index-wise (could be modified for full factorial)
     total_combinations = min(n_aod, n_ssa, n_g, n_heights)
-
     if max_runs:
         total_combinations = min(total_combinations, max_runs)
 
@@ -1385,6 +1436,10 @@ def run_multi_fastj_cases(wavelengths, aod_data, ssa_data, g_data, height_data,
     skipped_count = 0
     output_metadata = None
     runs_since_last_save = 0
+    last_saved_index = 0  # Track what we've already saved
+
+    # ← ADD: Track total runs processed (not just new ones)
+    total_runs_processed = 0
 
     # Process each combination
     for i in range(total_combinations):
@@ -1433,6 +1488,7 @@ def run_multi_fastj_cases(wavelengths, aod_data, ssa_data, g_data, height_data,
                         results_list.append(result_array)
                         run_hashes.append(run_hash)
                         runs_since_last_save += 1
+                        total_runs_processed += 1  # ← ADD: Track total
 
                         # Store metadata from first successful run
                         if output_metadata is None:
@@ -1444,33 +1500,77 @@ def run_multi_fastj_cases(wavelengths, aod_data, ssa_data, g_data, height_data,
                         if debug > 0:
                             print(f"  ✓ Run {run_hash} completed successfully")
                             print(f"    Result shape: {result_array.shape}")
+                            print(f"    Total processed: {total_runs_processed}, since last save: {runs_since_last_save}")
 
-                        # INCREMENTAL SAVE: Save results periodically
+                        # ← FIX: INCREMENTAL SAVE logic - only trigger every save_every runs
                         if incremental_save and runs_since_last_save >= save_every:
-                            print(f"\n--- Incremental Save ({len(results_list)} results) ---")
+                            print(f"\n--- Incremental Save ({runs_since_last_save} new results) ---")
 
-                            # Create temporary results array and metadata
-                            temp_results_np = np.array(results_list)
-                            if temp_results_np.ndim == 3:
-                                chunks = (min(100, len(results_list)), -1, -1)
+                            # Only save NEW results since last save (not all results!)
+                            new_results = results_list[last_saved_index:]
+                            new_hashes = run_hashes[last_saved_index:]
+
+                            print(f"Saving {len(new_results)} new results (indices {last_saved_index} to {len(results_list)-1})")
+                            print(f"Previous saved index: {last_saved_index}, Current list length: {len(results_list)}")
+
+                            if len(new_results) == 0:
+                                print("  ⚠ No new results to save - skipping")
+                                runs_since_last_save = 0
+                                continue
+
+                            # Create temporary results array with ONLY new results
+                            new_results_np = np.array(new_results)
+                            print(f"Source data check before creating temp_results:")
+                            print(f"  - new_results length: {len(new_results)}")
+                            print(f"  - First source result shape: {new_results[0].shape}")
+                            print(f"  - First source result non-zero: {np.count_nonzero(new_results[0])}")
+                            print(f"  - First source result range: {new_results[0].min():.2e} to {new_results[0].max():.2e}")
+
+                            # ← FIX: Handle 3D chunking correctly
+                            if new_results_np.ndim == 2:
+                                chunks = (min(100, new_results_np.shape[0]), -1)
+                            elif new_results_np.ndim == 3:
+                                chunks = (min(100, new_results_np.shape[0]), -1, -1)  # ← FIX: 3D chunking
                             else:
-                                chunks = (min(100, len(results_list)), -1)
-                            temp_results = da.from_array(temp_results_np, chunks=chunks)
+                                chunks = tuple(min(100, dim) if i == 0 else -1 for i, dim in enumerate(new_results_np.shape))
+
+                            print(f"Creating dask array with chunks: {chunks} for shape: {new_results_np.shape}")
+                            temp_results = da.from_array(new_results_np, chunks=chunks)
 
                             temp_metadata = {
-                                'run_hashes': run_hashes.copy(),
-                                'total_runs': len(results_list),
+                                'run_hashes': new_hashes,
+                                'total_runs': len(new_results),  # Only count new results
                                 'wavelengths': wavelengths,
                                 'checkpoint_file': checkpoint_file,
                                 'store_mean_intensity': store_mean_intensity,
                                 'output_flatten_method': output_flatten_method,
                                 'output_metadata': output_metadata,
                                 'incremental_save': True,
-                                'last_save_run_count': len(results_list)
+                                'batch_start_index': last_saved_index,
+                                'batch_end_index': len(results_list) - 1,
+                                'is_incremental_batch': True  # Flag to help debug
                             }
+
+                            # Diagnostics:
+                            if debug > 1:
+                                print(f"About to save temp_results with shape {temp_results.shape}")
+                                sample_data = temp_results.compute()
+                                if np.all(sample_data == 0):
+                                    print("🚨 WARNING: temp_results is ALL ZEROS before saving!")
+                                else:
+                                    print(f"✅ temp_results contains real data (range: {sample_data.min():.2e} to {sample_data.max():.2e})")
 
                             # Save incrementally with append mode
                             try:
+                                temp_np = temp_results.compute()
+                                if debug > 1:
+                                    print("temp_results data check:")
+                                    print(f"  - All zeros? {np.all(temp_np == 0)}")
+                                    print(f"  - Any zeros? {np.any(temp_np == 0)}")
+                                    print(f"  - Non-zero count: {np.count_nonzero(temp_np)} out of {temp_np.size}")
+                                    print(f"  - Min value: {temp_np.min():.2e}")
+                                    print(f"  - Max value: {temp_np.max():.2e}")
+                                    print(f"  - First array sample (first 5 values): {temp_np[0].flatten()[:5]}")
                                 saved_files = save_results(
                                     temp_results, temp_metadata,
                                     output_dir=output_dir,
@@ -1481,11 +1581,14 @@ def run_multi_fastj_cases(wavelengths, aod_data, ssa_data, g_data, height_data,
 
                                 if saved_files:
                                     print("  ✓ Incremental save successful")
-                                    runs_since_last_save = 0  # Reset counter
+                                    # ← CRITICAL FIX: Reset counter FIRST, then update saved index
+                                    runs_since_last_save = 0
+                                    last_saved_index = len(results_list)
+                                    print(f"  Updated last_saved_index to: {last_saved_index}")
 
                                     # Update checkpoint to track saved runs
                                     update_checkpoint_with_saved_status(
-                                        checkpoint_file, run_hashes
+                                        checkpoint_file, new_hashes
                                     )
                                 else:
                                     print("  ✗ Incremental save failed")
@@ -1510,30 +1613,20 @@ def run_multi_fastj_cases(wavelengths, aod_data, ssa_data, g_data, height_data,
 
     # Convert to dask array for memory efficiency
     if results_list:
-        # Handle different array shapes based on output method
         results_np = np.array(results_list)
         print(f"Results numpy array shape: {results_np.shape}")
 
-        # Set appropriate chunking based on array dimensions
+        # ← FIX: Set appropriate chunking based on array dimensions
         if results_np.ndim == 2:
-            # 2D array: (n_runs, n_features) - for flattened outputs
             chunks = (min(100, results_np.shape[0]), -1)
         elif results_np.ndim == 3:
-            # 3D array: (n_runs, n_altitudes, n_species) - for full_2d outputs
-            chunks = (min(100, results_np.shape[0]), -1, -1)
+            chunks = (min(100, results_np.shape[0]), -1, -1)  # ← FIX: 3D chunking
         else:
-            # Handle other dimensions
             chunks = tuple(min(100, dim) if i == 0 else -1 for i, dim in enumerate(results_np.shape))
 
+        print(f"Creating final dask array with chunks: {chunks}")  # ← ADD: Debug info
         results_array = da.from_array(results_np, chunks=chunks)
         print(f"Results dask array shape: {results_array.shape}")
-        print(f"Dask chunks: {chunks}")
-
-        if output_metadata:
-            print(f"Number of species: {output_metadata.get('n_species', 'unknown')}")
-            print(f"Species: {output_metadata.get('species', [])[:5]}...")  # Show first 5
-            if output_flatten_method == 'full_2d':
-                print(f"Number of altitudes: {output_metadata.get('n_altitudes', 'unknown')}")
     else:
         results_array = da.empty((0, 0))
 
@@ -1635,10 +1728,10 @@ def main():
     # Define directories containing csv files (showing with testData)
     csvDir_aerosolProps = './testData/aerosol_properties'
     # NOTE: for the heights in testData, we have RSP and HSRL derived heights. Don't forget to update the path
-    csvDir_aerosolHeight = './testData/aerosol_heights/HSRL'
+    csvDir_aerosolHeight = './testData/aerosol_heights/RSP'
 
     # Number of runs to process (None = all available)
-    max_runs = 100  # SET TO 1 FOR TESTING, any number for chunks, or None (all)
+    max_runs = None  # SET TO 1 FOR TESTING, any number for chunks, or None (all)
 
     # Output processing options
     store_mean_intensity = False  # Set to True if you want mean intensity data
@@ -1646,7 +1739,8 @@ def main():
 
     # File saving options
     append_to_existing = True
-    fixed_run_name = aerosol_tag  # This is different from aerosol_tag and can be named whatever
+    # fixed_run_name = aerosol_tag  # This is different from aerosol_tag and can be named whatever
+    fixed_run_name = 'Marine_RSP'  # This is different from aerosol_tag and can be named whatever
     save_format = 'zarr'  # Options: 'zarr', 'numpy', 'hdf5'
 
     # Incremental saving (recommended for long runs)
@@ -1705,6 +1799,7 @@ def main():
         store_mean_intensity=store_mean_intensity,
         output_flatten_method=output_method,
         incremental_save=incremental_save,
+        save_every=save_every,
         output_dir='fastj_results',
         run_name=fixed_run_name,
         save_format=save_format
@@ -1728,20 +1823,54 @@ def main():
     # SAVE RESULTS FOR LATER ANALYSIS
     # ========================================================================
     if results_array.shape[0] > 0:  # Only save if we have results
-        print("\nSaving results for later analysis...")
-        saved_files = save_results(
-            results_array,
-            metadata,
-            output_dir='fastj_results',
-            run_name=fixed_run_name,  # Will auto-generate timestamp name
-            save_format=save_format,
-            append_mode=append_to_existing
-        )
+        if incremental_save:
+            total_runs = metadata['total_runs']
+            already_saved = (total_runs // save_every) * save_every
+            unsaved_runs = total_runs - already_saved
 
-        if saved_files:
-            print("Results saved successfully!")
-            print("To load later, use:")
-            print(f"  results, meta = load_results(run_name='{saved_files['run_name']}')")
+            if unsaved_runs > 0:
+                print(f"Saving final {unsaved_runs} unsaved results...")
+
+                # save now only unsaved portions
+                unsaved_results = results_array[-unsaved_runs:]
+
+                # Update metadata ofr just unsaved portion
+                unsaved_metadata = metadata.copy()
+                unsaved_metadata['run_hashes'] = metadata['run_hashes'][-unsaved_runs:]
+                unsaved_metadata['total_runs'] = unsaved_runs
+
+                saved_files = save_results(
+                    # results_array,
+                    # metadata,
+                    unsaved_results,
+                    unsaved_metadata,
+                    output_dir='fastj_results',
+                    run_name=fixed_run_name,  # Will auto-generate timestamp name
+                    save_format=save_format,
+                    append_mode=True
+                )
+
+                if saved_files:
+                    print("Results saved successfully!")
+                    print("To load later, use:")
+                    print(f"  results, meta = load_results(run_name='{saved_files['run_name']}')")
+            else:
+                print("All results already saved via incremental save")
+        else:
+            # no incremental save
+            saved_files = save_results(
+                results_array,
+                metadata,
+                output_dir='fastj_results',
+                run_name=fixed_run_name,  # Will auto-generate timestamp name
+                save_format=save_format,
+                append_mode=True
+            )
+
+            if saved_files:
+                print("Results saved successfully!")
+                print("To load later, use:")
+                print(f"  results, meta = load_results(run_name='{saved_files['run_name']}')")
 
     # Optional: Save results to file
     print(f"  - Checkpoint file: {metadata['checkpoint_file']}")
